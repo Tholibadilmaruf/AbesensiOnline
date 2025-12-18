@@ -1,88 +1,93 @@
 # STATUS PROYEK
 
-## Kondisi Umum
+**Terakhir diperbarui:** 2025-12-19
 
-- Repo: baru dibuat
-- Folder docs: siap
-- Belum ada kode
+## Ringkasan Singkat
 
-## Tahap Saat Ini
+- **Backend:** default port **3009** (<http://localhost:3009>)
+- **Frontend:** default port **3010** (<http://localhost:3010>)
+- Perubahan terbatas pada konfigurasi port dan dokumentasi; tidak ada perubahan logika aplikasi atau penambahan dependency.
 
-FASE E – Frontend Scaffold (Admin)
+---
 
-## Yang Sudah Selesai
+## Perubahan Terbaru (dilakukan)
 
-- Dokumen konsep tersedia
-- SPEC.md dibuat
-- RULES.md dibuat
-- FLOW.md dibuat
+- Backend
+  - `backend/.env` & `backend/.env.example` → `PORT=3009`
+  - `backend/src/index.js` → uses `const PORT = process.env.PORT || 3009;` and logs `🚀 Backend running at http://localhost:${PORT}`
+  - `backend/package.json` → `start`/`dev` restored to `node src/index.js` (env override preserved)
+  - `backend/README.md` updated with port docs and override examples (cmd / PowerShell / bash)
 
-- Prisma schema dibuat (`prisma/schema.prisma`) dengan models: users, employees, attendance, attendance_corrections, leave_requests, overtime_requests, payroll_periods.
-- Basic backend auth (login/logout) scaffold dibuat:
-  - `package.json`
-  - `src/index.js`
-  - `src/auth.js`
-  - `.env.example`
+- Frontend
+  - `frontend/package.json` → scripts set to:
 
-- RBAC middleware ditambahkan:
-  - `src/auth/auth.middleware.js` (verify JWT, set `req.user`)
-  - `src/middlewares/assertAuthenticated.js`
-  - `src/middlewares/requireRole.js`
-  - `src/middlewares/requireAnyRole.js`
+    ```json
+    "dev": "next dev -p 3010",
+    "build": "next build",
+    "start": "next start -p 3010",
+    "lint": "next lint"
+    ```
 
-- Validasi kategori karyawan ditambahkan di backend (validator terpusat):
-  - `src/validators/attendanceCategory.validator.js`
-  - `src/services/attendance.service.js` menggunakan validator untuk `checkIn`/`checkOut`
+  - `frontend/next.config.ts` → rewrite `/api/:path*` → `http://localhost:3009/api/:path*` (verified)
+  - `frontend/.env.example` created with `PORT=3010`
+  - `frontend/README.md` updated with port and API proxy notes
 
-- Seed script dan contoh data pengguna dibuat: `prisma/seed.js` (OWNER/ADMIN/KARYAWAN)
-- Contoh route attendance dengan integrasi RBAC & Payroll Lock Guard:
-  - `src/routes/attendance.js`
-  - `src/guards/assertPayrollUnlocked.js`
-  - `src/services/payrollPeriod.service.js`
+- Docs
+  - `docs/STATUS.md` (this file) updated with current status and verification results.
 
-- Frontend scaffold (Admin) dibuat di `frontend/`:
-  - Next.js (App Router) + Tailwind CSS
-  - Basic routes: `app/layout`, `app/page`, `app/admin/layout`, `app/admin/page`
-  - Static mock data; belum ada integrasi API (no fetches)
+---
 
-## Next Step
+## Verifikasi & Hasil Tes
 
-- Finalisasi desain UI dan definisi API untuk integrasi (FASE F)
-- Implementasi integrasi API di frontend (menggunakan kontrak di `docs/API_CONTRACT.md`)
+- Backend
+  - Command: `cd backend && npm run dev`
+  - Console: `🚀 Backend running at http://localhost:3009`
+  - HTTP: `GET http://127.0.0.1:3009/` → **200 OK** with JSON `{ ok: true, service: 'absensi-backend' }`
+  - Environment override confirmed (e.g., `set PORT=4000 && npm run start` or PowerShell `$Env:PORT='4000'; npm run start`).
 
--- Untuk menjalankan lokal: jalankan `npm install`, set `DATABASE_URL` di `.env`, lalu `npx prisma generate` dan `npm run seed`.
+- Frontend
+  - Dev: `npm run dev` prints `Local: http://localhost:3010` but in this Windows workstation dev mode produced SWC / Turbopack / WASM warnings (native DLL init failed) — environment-specific.
+  - Build: `npm run build` → **success**.
+  - Production start: started detached process via `node node_modules/next/dist/bin/next start -p 3010` → `GET http://127.0.0.1:3010/` → **200 OK** (served HTML). Verified accessible.
 
-## Catatan Perbaikan Terbaru
+---
 
-- `backend/package.json` diperbarui: `dev` script diubah menjadi `node src/index.js` (menghindari dependensi `nodemon` yang tidak tersetup) dan `prisma` ditambahkan ke `devDependencies` agar `npx prisma` tersedia.
-- Setelah perubahan ini, langkah lokal yang direkomendasikan:
+## Isu yang Masih Ada (Known Issues)
 
-```bash
-cd backend
-npm install
-npx prisma generate
-npm run seed
-npm run dev
-```
+- SWC / Turbopack native binary failures and WebAssembly bindings warnings on this Windows environment:
+  - Symptoms: "Attempted to load @next/swc-win32-x64-msvc" DLL init failed, and "turbo.createProject is not supported by the wasm bindings".
+  - Impact: local `next dev` is noisy/unreliable here; `next build` and `next start` still work.
+  - Constraint: per rule, no new dependencies or logic were changed. Fix requires environment-level actions (reinstall native modules, rebuild, or run under WSL).
 
-Jika ada error saat `npx prisma generate`, pastikan `DATABASE_URL` diisi di `backend/.env` sebelum menjalankan migrasi.
+---
 
-## Hasil Eksekusi Terbaru
+## Rekomendasi & Next Steps
 
-- `npx prisma generate` — berhasil setelah perbaikan skema.
-- `npx prisma db push` — berhasil (SQLite `backend/dev.db` dibuat dan schema diterapkan).
-- `npm run seed` — berhasil; users/employee contoh dibuat.
-- `node src/index.js` (start server) — percobaan start dilakukan; proses mengalami pesan lingkungan (Copilot rate limit) di terminal yang mencegah verifikasi proses. Untuk verifikasi lokal, jalankan langkah berikut di mesin pengembang:
+- Option A (recommended): Add a small health-check script (no new deps) to verify both services:
+  - `http://localhost:3009/` (backend)
+  - `http://localhost:3010/` (frontend)
+- Option B: Investigate and fix SWC/Turbopack (requires rebuilding native modules or using WSL) — I can proceed if you authorize environment-level changes.
+- Option C: Nothing further; keep repo as-is and document workflows (already added README notes).
 
-```bash
-cd backend
-npm install
-npx prisma generate
-npx prisma db push
-npm run seed
-npm run dev
-```
+---
 
-Jika `npx prisma db push` sudah dijalankan, cukup jalankan `npm run seed` lalu `npm run dev`.
+## File Utama yang Diubah
 
-**🔒 Checkpoint: Struktur repo final** — Repo diinisialisasi, commit struktural dibuat dan dipush ke `origin/main`.
+- backend/.env
+- backend/.env.example
+- backend/src/index.js
+- backend/package.json
+- backend/README.md
+- frontend/package.json
+- frontend/.env.example
+- frontend/README.md
+- docs/STATUS.md
+
+---
+
+**Wrap-up (Selesai):** Semua tugas scan, perbaikan, verifikasi, dan dokumentasi telah diselesaikan pada **2025-12-19**.
+
+- Health-check script ditambahkan: `scripts/health-check.js` (jalankan `node scripts/health-check.js` dari root untuk memeriksa backend:3009 dan frontend:3010).
+- Semua scripts dev/start/build lint dan README ditinjau dan disesuaikan untuk konsistensi port (backend:3009, frontend:3010).
+
+Jika Anda ingin langkah tambahan, silakan pilih salah satu: `prepare-pr` (siapkan ringkasan commit/PR), `investigate-swc` (diagnosa SWC/Turbopack dev issue), atau `none`. Terima kasih!

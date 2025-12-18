@@ -14,7 +14,30 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3010](http://localhost:3010) with your browser to see the result.
+
+---
+
+## Lokal: Port dan Proxy API
+
+- **Frontend:** runs on `http://localhost:3010` by default (see `package.json` scripts).
+- **API proxy:** requests to `/api/*` are proxied to the backend via app-router proxy routes (handled by `src/app/api/*` routes). If you run `next dev` and see SWC/Turbopack native binary errors on Windows, use the legacy scripts below.
+
+- Windows workaround (legacy):
+
+  - Dev (legacy):
+
+    ```cmd
+    npm run dev:legacy
+    ```
+
+  - Start (legacy):
+
+    ```cmd
+    npm run start:legacy
+    ```
+
+  These set `NEXT_DISABLE_TURBOPACK=1` temporarily to avoid native SWC/Turbopack issues on some Windows systems.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

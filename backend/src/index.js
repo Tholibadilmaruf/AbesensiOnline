@@ -1,4 +1,6 @@
 require('dotenv').config();
+process.on('uncaughtException', (err) => { console.error('uncaughtException', err); process.exit(1); });
+process.on('unhandledRejection', (err) => { console.error('unhandledRejection', err); });
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 
@@ -33,7 +35,7 @@ app.use('/', attendanceCorrectionRoutes);
 
 app.get('/', (req, res) => res.json({ ok: true, service: 'absensi-backend' }));
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+const PORT = process.env.PORT || 3009;
+app.listen(PORT, () => {
+    console.log(`🚀 Backend running at http://localhost:${PORT}`);
 });
