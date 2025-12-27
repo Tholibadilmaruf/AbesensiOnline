@@ -95,6 +95,14 @@ app.use((err, req, res, next) => {
 
 // Default backend port for local development is 3009 (not 3000)
 const port = process.env.PORT || 3009;
+
+// Strong policy: disallow using port 3000 (legacy/default) — force a fail-fast so maintainer updates config
+if (process.env.PORT && Number(process.env.PORT) === 3000) {
+    logger.error('Port 3000 is disallowed for this project. Set PORT=3009 for backend.');
+    // Exit to make the misconfiguration obvious during local/dev runs
+    process.exit(1);
+}
+
 let server;
 
 async function shutdown(code = 0) {
