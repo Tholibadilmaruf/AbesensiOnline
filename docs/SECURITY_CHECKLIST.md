@@ -12,5 +12,6 @@
 10. Add CI pipelines for linting, unit tests, and integration tests
 11. Conduct regular dependency audits (`npm audit`) and patch high/critical vulnerabilities
 12. Add e2e tests for authentication and role-based flows
+13. Add SAST (Semgrep) and secret scanning (detect-secrets) in CI; maintain a `.secrets.baseline` to reduce false positives and prevent noisy alerts.
 
 Follow this checklist before bringing the system to production for ~100+ users.
