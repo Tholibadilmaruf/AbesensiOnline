@@ -95,7 +95,8 @@ app.use((err, req, res, next) => {
 
 // Default backend port for local development is 3009 (not 3000)
 const port = process.env.PORT || 3009;
-let server;"},{
+let server;
+
 async function shutdown(code = 0) {
     try {
         logger.info('Shutting down server...');
