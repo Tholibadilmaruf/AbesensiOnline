@@ -5,17 +5,37 @@
     "main": "src/index.js",
     "scripts": {
         "start": "node src/index.js",
-        "dev": "node src/index.js",
-        "seed": "node prisma/seed.js"
+        "dev": "nodemon src/index.js",
+        "dev:watch": "nodemon src/index.js",
+        "seed": "node prisma/seed.js",
+        "test:validators": "node test/run-validators.js",
+        "prisma:generate": "prisma generate",
+        "prisma:migrate": "prisma migrate dev",
+        "prisma:migrate:dev": "prisma migrate dev --name init",
+        "prisma:migrate:deploy": "prisma migrate deploy",
+        "prisma:studio": "prisma studio",
+        "prisma:reset": "prisma migrate reset",
+        "db:up": "docker-compose -f ../docker-compose.yml up -d db",
+        "db:down": "docker-compose -f ../docker-compose.yml down",
+        "test": "mocha --exit",
+        "test:smoke": "node test/run-smoke.js"
     },
     "dependencies": {
         "@prisma/client": "^5.0.0",
         "bcryptjs": "^2.4.3",
+        "cloudinary": "^2.8.0",
+        "cors": "^2.8.5",
         "dotenv": "^16.0.0",
         "express": "^4.18.2",
+        "express-rate-limit": "^7.0.1",
+        "express-validator": "^7.0.1",
+        "helmet": "^7.0.0",
         "jsonwebtoken": "^9.0.0"
     },
     "devDependencies": {
-        "prisma": "^5.0.0"
+        "mocha": "^10.2.0",
+        "nodemon": "^3.1.11",
+        "prisma": "^5.0.0",
+        "supertest": "^6.3.3"
     }
 }
