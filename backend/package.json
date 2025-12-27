@@ -6,6 +6,7 @@
     "scripts": {
         "start": "node src/index.js",
         "dev": "nodemon src/index.js",
+        "build": "npm run prisma:generate",
         "dev:watch": "nodemon src/index.js",
         "seed": "node prisma/seed.js",
         "test:validators": "node test/run-validators.js",
