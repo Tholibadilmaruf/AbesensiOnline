@@ -19,3 +19,14 @@ yarn-error.log*
 
 # OS
 .DS_Store
+
+# Local backups, logs, and scan outputs (managed by cleanup)
+backend/logs/
+backend/*.log
+backend/*.err
+backend/.env*.bak
+backend/detect-secrets-output.json
+backend/semgrep-report.json
+backend/trufflehog-report.json
+detect-secrets-root.json
+backend/prisma/migrations_sqlite_backup/
