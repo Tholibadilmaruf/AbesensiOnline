@@ -2,12 +2,13 @@
 
 These `*.yml.disabled` templates are included in the repo so you can review them in a PR without enabling them automatically. To enable the checks in GitHub Actions:
 
-1. Rename the files under `.github/workflows/` from `*.yml.disabled` to `*.yml`.
+1. Move or copy the template files from `.github/workflows-templates/` to `.github/workflows/` (example: copy `semgrep-scan.yml` to `.github/workflows/semgrep-scan.yml`).
 2. Add GitHub Secrets in the repository settings as needed (example):
    - `SEMGREP_REGISTRY_TOKEN` (optional — only if you want to use Semgrep registry / premium rules)
    - Any other secrets referenced by rules/checks.
 3. Merge the PR and verify the workflow runs on a PR to `main` or the configured branch.
 
+Note: The templates are provided in `.github/workflows-templates/` because creating/updating files directly under `.github/workflows/` requires a token with `workflow` scope. Copying or moving the files into `.github/workflows/` after merge enables you to activate them without granting that scope to a CI token.
 Notes:
 - `detect-secrets` uses a `.secrets.baseline` file to reduce false positives; keep it updated by running `detect-secrets scan --baseline .secrets.baseline` locally and committing changes.
 - If you want the Semgrep Registry rules enabled, run `semgrep login` locally, obtain a token, and set `SEMGREP_REGISTRY_TOKEN` as a secret in GitHub.
