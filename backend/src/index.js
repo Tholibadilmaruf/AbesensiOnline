@@ -6,6 +6,18 @@ const rateLimit = require('express-rate-limit');
 const { PrismaClient } = require('@prisma/client');
 const logger = require('./utils/logger');
 
+// Debug: wrap process.exit to log stack trace when called (helps track unexpected exits)
+const _origProcessExit = process.exit;
+process.exit = function(code) {
+    try {
+        logger.error(`process.exit called with code: ${code}`);
+        logger.error(new Error('Stack trace for process.exit call').stack);
+    } catch (e) {
+        // ignore logging errors
+    }
+    return _origProcessExit.call(process, code);
+};
+
 if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
     logger.error('Missing required env: JWT_SECRET');
     // Do not exit process automatically; we just log the critical issue so deployment tooling can act
@@ -125,8 +137,14 @@ if (require.main === module) {
         logger.info(`Server listening on port ${port}`);
     });
 
-    process.on('SIGTERM', () => shutdown(0));
-    process.on('SIGINT', () => shutdown(0));
+    process.on('SIGTERM', () => {
+        logger.info('SIGTERM received');
+        shutdown(0);
+    });
+    process.on('SIGINT', () => {
+        logger.info('SIGINT received');
+        shutdown(0);
+    });
 }
 
 module.exports = { app, prisma };

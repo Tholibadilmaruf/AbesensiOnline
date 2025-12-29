@@ -1,0 +1,20 @@
+Readiness check failed PrismaClientInitializationError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+error: Error validating datasource `db`: the URL must start with the protocol `file:`.
+  -->  schema.prisma:7
+   | 
+ 6 |   provider = "sqlite"
+ 7 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at $n.handleRequestError (E:\THOLIB\Projek\absensi-online\backend\node_modules\@prisma\client\runtime\library.js:121:7615)
+    at $n.handleAndLogRequestError (E:\THOLIB\Projek\absensi-online\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (E:\THOLIB\Projek\absensi-online\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (E:\THOLIB\Projek\absensi-online\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async E:\THOLIB\Projek\absensi-online\backend\src\index.js:75:9 {
+  clientVersion: '5.22.0',
+  errorCode: undefined
+}
